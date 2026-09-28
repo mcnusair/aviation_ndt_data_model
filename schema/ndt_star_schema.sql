@@ -2,15 +2,11 @@
 -- NDT Inspection Star Schema
 -- Databricks SQL / Spark SQL compatible
 -- Author: M.Salah
--- Description: Dimensional model for aviation NDT inspection data
---              covering inspectors, components, equipment, work orders,
---              facilities, methods, and inspection outcomes.
+-- Description: Dimensional model for aviation NDT inspection data covering inspectors, components, equipment, work orders, facilities, methods, and inspection outcomes.
 
 
-
--- -----------------------------------------------------------------------------
 -- DIMENSION TABLES
--- -----------------------------------------------------------------------------
+
 
 -- Facilities where NDT inspections are performed
 
@@ -104,9 +100,8 @@ CREATE TABLE IF NOT EXISTS dim_inspector (
 );
 
 
--- -----------------------------------------------------------------------------
 -- FACT TABLE
--- -----------------------------------------------------------------------------
+
 
 -- One row per NDT inspection event
 -- equipment_key is nullable: some methods (PT, VT) use consumables not equipment
