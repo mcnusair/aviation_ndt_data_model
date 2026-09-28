@@ -10,7 +10,7 @@ The repository includes the production DDL in Databricks SQL, a DuckDB-compatibl
  
 Every NDT inspection in an MRO environment produces a structured record covering what was inspected, who inspected it, what method and equipment were used, where the inspection took place, and what was found. Regulatory frameworks (EASA Part 145, EN4179, NAS410) require this data to be traceable and auditable, which means the model must preserve historical states rather than overwrite them.
  
-The two SCD Type 2 dimensions are `dim_inspector` and `dim_equipment`. Inspector certifications change when authorizations are renewed or upgraded. Equipment goes through calibration cycles. The model preserves the exact state of both at the time of each inspection, which is essential for audit and regulatory traceability.
+The two SCD Type 2 dimensions are dim_inspector and dim_equipment. Inspector certifications change when authorizations are renewed or upgraded. Equipment goes through calibration cycles. The model preserves the exact state of both at the time of each inspection, which is essential for audit and regulatory traceability.
  
 ---
  
@@ -138,7 +138,7 @@ pip install -r requirements.txt
 python src/setup_db.py
 ```
  
-This creates `ndt.db`, drops and recreates all tables, and loads the sample data. Run it again any time you want to reset to a clean state.
+This creates ndt.db, drops and recreates all tables, and loads the sample data. Run it again any time you want to reset to a clean state.
  
 **Run the analytical queries**
  
@@ -146,13 +146,13 @@ This creates `ndt.db`, drops and recreates all tables, and loads the sample data
 python src/run_queries.py
 ```
  
-This connects to the existing `ndt.db` and prints the results of all five queries to the terminal.
+This connects to the existing ndt.db and prints the results of all five queries to the terminal.
  
 ---
  
 ## Analytical queries
  
-The five queries in `schema/example_queries.sql` and `src/run_queries.py` answer the following business questions:
+The five queries in schema/example_queries.sql and src/run_queries.py answer the following business questions:
  
 | Query | Business question |
 |-------|------------------|
@@ -162,7 +162,7 @@ The five queries in `schema/example_queries.sql` and `src/run_queries.py` answer
 | 4 | Which equipment has calibration expiring within the next 90 days? |
 | 5 | How many inspections were performed at each facility per quarter? |
  
-**Sample output — Query 1: Pass rate by NDT method**
+**Sample output: Pass rate by NDT method**
  
 ```
               method_name  total_inspections  passed  pass_rate_pct
@@ -244,17 +244,17 @@ One row per equipment calibration cycle.
  
 ## Production deployment
  
-The production DDL in `schema/ndt_star_schema.sql` targets Databricks SQL and Spark SQL. It uses `BIGINT GENERATED ALWAYS AS IDENTITY` for surrogate keys, named `CONSTRAINT` syntax for all primary keys, foreign keys, and check constraints, and `STRING` as the character type.
+The production DDL in schema/ndt_star_schema.sql targets Databricks SQL and Spark SQL. It uses BIGINT GENERATED ALWAYS AS IDENTITY for surrogate keys, named CONSTRAINT syntax for all primary keys, foreign keys, and check constraints, and STRING as the character type.
  
-The DuckDB version in `schema/ndt_star_schema_duckdb.sql` is a simplified equivalent for local development and testing. The two files represent the same logical model with syntax adapted to each engine.
+The DuckDB version in schema/ndt_star_schema_duckdb.sql is a simplified equivalent for local development and testing. The two files represent the same logical model with syntax adapted to each engine.
  
-To deploy to Databricks, run `ndt_star_schema.sql` in a Databricks SQL notebook or via the Databricks CLI against your target catalog and schema in Unity Catalog.
+To deploy to Databricks, run ndt_star_schema.sql in a Databricks SQL notebook or via the Databricks CLI against your target catalog and schema in Unity Catalog.
  
 ---
  
 ## Design decisions
  
-All modeling choices are documented in `docs/design_decisions.md`, covering the choice of star over snowflake schema, the surrogate key strategy, SCD Type 2 on inspectors and equipment, the nullable equipment key, the EN4179 level constraint, and the grain of the fact table.
+All modeling choices are documented in docs/design_decisions.md, covering the choice of star over snowflake schema, the surrogate key strategy, SCD Type 2 on inspectors and equipment, the nullable equipment key, the EN4179 level constraint, and the grain of the fact table.
  
 ---
  
