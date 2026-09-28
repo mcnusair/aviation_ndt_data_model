@@ -14,27 +14,27 @@ The model uses a star schema with flat, denormalized dimension tables. A snowfla
 
 Not every dimension gets a surrogate key. The choice depends on whether the dimension needs SCD2 versioning.
 
-`dim_inspector` and `dim_equipment` use surrogate keys (`inspector_key`, `equipment_key`) because both change over time and need row versioning. The fact table must point to the exact version of the inspector or equipment that existed at the time of the inspection, not the current state.
+dim_inspector and dim_equipment use surrogate keys (inspector_key, equipment_key) because both change over time and need row versioning. The fact table must point to the exact version of the inspector or equipment that existed at the time of the inspection, not the current state.
 
-`dim_facility`, `dim_component`, `dim_workorder`, and `dim_method` use natural keys because they are stable. A facility ID, component serial number, work order ID, and method code do not change in the source MRO system. A surrogate key would add complexity with no benefit.
+dim_facility, dim_component, dim_workorder, and dim_method use natural keys because they are stable. A facility ID, component serial number, work order ID, and method code do not change in the source MRO system. A surrogate key would add complexity with no benefit.
 
 ---
 
 ## 3. SCD Type 2 on dim_inspector
 
-Inspector certifications expire and get renewed. An inspector can also be upgraded from Level 2 to Level 3. The model needs to answer the question: what was this inspector's certification level at the time of this specific inspection? Overwriting the current row (SCD1) would lose that information. Each time a certification changes, a new row is inserted with updated `valid_from`, `valid_to`, and `is_current` fields. The fact table joins on `inspector_key`, which points to the exact version.
+Inspector certifications expire and get renewed. An inspector can also be upgraded from Level 2 to Level 3. The model needs to answer the question: what was this inspector's certification level at the time of this specific inspection? Overwriting the current row (SCD1) would lose that information. Each time a certification changes, a new row is inserted with updated valid_from, valid_to, and is_current fields. The fact table joins on inspector_key, which points to the exact version.
 
 ---
 
 ## 4. SCD Type 2 on dim_equipment
 
-Calibration is not a fixed attribute of a piece of equipment. It changes on a regular cycle. If a calibration is found to have been out of date during a past inspection, the data must reflect what the calibration status actually was at that time, not what it is today. The same versioning pattern as `dim_inspector` applies here.
+Calibration is not a fixed attribute of a piece of equipment. It changes on a regular cycle. If a calibration is found to have been out of date during a past inspection, the data must reflect what the calibration status actually was at that time, not what it is today. The same versioning pattern as dim_inspector applies here.
 
 ---
 
 ## 5. equipment_key is nullable in fact_inspections
 
-Several NDT methods do not use calibrated equipment with a traceable serial number. Liquid penetrant (PT) and visual inspection (VT) rely on consumables and trained human judgment. Forcing a non-null equipment reference for these inspections would either produce dummy records in `dim_equipment` or require a separate fact table per method. A nullable foreign key is the correct and honest representation of the real-world process.
+Several NDT methods do not use calibrated equipment with a traceable serial number. Liquid penetrant (PT) and visual inspection (VT) rely on consumables and trained human judgment. Forcing a non-null equipment reference for these inspections would either produce dummy records in dim_equipment or require a separate fact table per method. A nullable foreign key is the correct and honest representation of the real-world process.
 
 ---
 
