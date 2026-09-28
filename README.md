@@ -173,7 +173,7 @@ The five queries in `schema/example_queries.sql` and `src/run_queries.py` answer
 Liquid Penetrant Testing                  1     0.0            0.0
 ```
  
-**Sample output — Query 2: Inspector workload and performance**
+**Sample output: Inspector workload and performance**
  
 ```
      inspector_name  certification_level  total_inspections  pass_rate_pct
